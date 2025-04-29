@@ -1,5 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
+import crypto from "crypto";
+import axios from "axios";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,29 +13,75 @@ app.listen(port, () =>
     console.log(`Server is running on Port: ${port}`);
 });
 
-app.post("/", (userReq, myRes) =>
+app.post("/", async (userReq, myRes) =>
 {
-    var password = userReq.body.password;
-    var passwordArray = password.split("");
+    try
+    {
+        var password = userReq.body.password;
+        var analysis;
 
-    var result = "Empty";
+        if (!password)
+        {
+            analysis = "No password was provided";
+            return myRes.json({Result: analysis});
+        }
 
+        var passwordHash = crypto.createHash("sha1").update(password).digest("hex").toUpperCase();
+        var firstFiveHash = passwordHash.slice(0, 5);
+        var restHash = passwordHash.slice(5);
+    
+        var hasLetters = /[a-zA-Z]/.test(password);
+        var hasNumbers = /\d/.test(password);
+        var hasSpecial = /[^\da-zA-Z]/.test(password);
+        var hasSpace = /\s/.test(password);
+      
+        var response = await axios.get(`https://api.pwnedpasswords.com/range/${firstFiveHash}`, 
+            {
+                headers:
+                {
+                    "User-Agent": "PasswordStrengthCheckerProject/1.0"
+                }
+            }
+        );
 
-    myRes.json(result);
+        var responseHashes = response.data.split("\n");
+        var found = responseHashes.find(resHash => resHash.startsWith(restHash));
+        
+        if (found)
+        {
+            analysis = "Password found in several breached databases";
+        }
+        else if (hasSpace)
+        {
+            analysis = "Password contains space";
+        }
+        else if (password.length < 8)
+        {
+            analysis = "Password is too short";
+        }
+        else
+        {
+            if (hasLetters && hasNumbers && hasSpecial)
+            {   
+                analysis = "Excellent strength";
+            } 
+            else if (hasLetters && hasNumbers || hasLetters && hasSpecial || hasNumbers && hasSpecial)
+            {
+                analysis = "Good strength";
+            }
+            else if (hasLetters || hasNumbers || hasSpecial)
+            {
+                analysis = "Poor strength";
+            }
+        }
 
+        myRes.status(200).json({result: analysis});
+    }
 
-    //1: Check if the password contains less than 8 characters => Unacceptable =>
-    //If only the password is longer than 8 characters, the below tests will be taken
+    catch (error)
+    {
+        console.log(error.message);
+        myRes.status(500).json("Something went wrong on the server");
+    }
 
-    //2: Check if the password contains only numbers or only letters => Poor =>
-
-    //3: Check if the password contains both numbers and letter => Acceptable 
-
-    //4: Check if the password contains numbers and special characters => Good
-
-    //5: Check if the password contains letters and special characters => Good
-
-    //6: Check if the password contains letters and numbers as well as special characters => Excellent
-
-    //7: Check if the password matches against the 1000 most common passwords
 });
