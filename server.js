@@ -74,8 +74,8 @@ app.post("/", async (userReq, myRes) =>
                 analysis = "Poor strength";
             }
         }
-
-        myRes.status(200).json({result: analysis});
+        
+        myRes.status(200).json({Result: analysis});
     }
 
     catch (error)
@@ -83,5 +83,4 @@ app.post("/", async (userReq, myRes) =>
         console.log(error.message);
         myRes.status(500).json("Something went wrong on the server");
     }
-
 });
