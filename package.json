@@ -1,0 +1,17 @@
+{
+  "name": "passwordstrength",
+  "version": "1.0.0",
+  "description": "A simple API that checks whether the provided password is strong enough or not",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Bhupesh Boora",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0"
+  }
+}
