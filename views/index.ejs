@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        li
+        {
+            line-height: 175%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            color: #444;
+        }
+
+        pre {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 2px 5px;
+            border-radius: 5px;
+        }
+
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .example {
+            background-color: #e2e2e2;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        <h1>Password Strength Checker API</h1>
+
+        <p>Hello and welcome to the Password Strength Checker API.</p>
+        <p>This API helps you check the strength of a password, and also checks if it has been found in any data breaches.</p>
+        <hr>
+        <h2>How to Use:</h2>
+        <p>Make a POST request to the following endpoint:</p>
+        <pre><code>POST /check</code></pre>
+
+        <p>The request body should contain a <code>password</code> field, as the <b>key&value</b> pair shown below:</p>
+
+        <pre><code>{ 
+    "password": "yourPassword123!" 
+ }</code></pre>
+        <hr>
+        <h2>Response:</h2>
+        <p>The API will respond with a <code>result</code> (JSON object) containing the password strength analysis. If the password has been found in breached databases, the API will indicate that as well.</p>
+
+        <p>Example response:</p>
+
+        <pre><code>{ 
+    "result": "Password found in several breached databases" 
+ }</code></pre>
+
+        <p>If the password was not found in any known breached database, you may receive one of the following responses:</p>
+
+        <ul>
+            <li>"Password is too short"</li>
+            <li>"Password contains space"</li>
+            <li>"Excellent strength"</li>
+            <li>"Good strength"</li>
+            <li>"Poor strength"</li>
+        </ul>
+        <hr>
+        <h2>Sample cURL Request:</h2>
+    <pre><code>curl -X POST https://password-strength-checker-au80.onrender.com/check/ \
+-H "Content-Type: application/x-www-form-urlencoded" \
+--data-urlencode "password=yourPasswordHere"</code></pre>
+
+    <h2>Response:</h2>
+    <p>Returns a JSON object containing a <code>result</code> field describing the password strength or warning.</p>
+    <hr>
+
+    <h2>How Passwords Are Evaluated:</h2>
+    <p>The API evaluates the password based on the following criteria:</p>
+    <ul>
+        <li><strong>Empty Password:</strong> No password field provided in the request.</li>
+        <li><strong>Breached Password:</strong> Password appears in a known data breach.</li>
+        <li><strong>Whitespace Check:</strong> Password contains spaces, which is not allowed.</li>
+        <li><strong>Length Check:</strong> Password must be at least 8 characters long.</li>
+        <li><strong>Character Composition:</strong></li>
+        <ol>
+            <li><strong>Excellent strength:</strong> Contains letters, numbers, and special characters.</li>
+            <li><strong>Good strength:</strong> Contains any two of the three: letters, numbers, or special characters.</li>
+            <li><strong>Poor strength:</strong> Contains only one of the three: letters, numbers, or special characters.</li>
+        </ol>
+    </ul>
+    <hr>
+    <h2>Important Notes:</h2>
+        <ul>
+            <li>The password is hashed and checked against known data breaches using the "Pwned Passwords" service.</li>
+            <li>If not found, the API checks for password strength based on length, use of letters, numbers, special characters, and spaces.</li>
+        </ul>
+    </div>
+
+    <footer>
+        &copy; <%= new Date().getFullYear() %> Password Strength Checker API. All rights reserved.<br>
+        Contact: bhupeshboora@gmail.com
+    </footer>
+</body>
+</html>

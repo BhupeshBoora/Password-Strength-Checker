@@ -13,7 +13,12 @@ app.listen(port, () =>
     console.log(`Server is running on Port: ${port}`);
 });
 
-app.post("/", async (userReq, myRes) =>
+app.get("/", (userReq, myRes) =>
+{
+    myRes.render("index.ejs");
+});
+
+app.post("/check", async (userReq, myRes) =>
 {
     try
     {
